@@ -1,11 +1,11 @@
-// index.js
 require("dotenv").config();
 const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
-BOT_TOKEN = "8376231340:AAHW7p6WGbqhO-UXCf1nhPqa8RuqRA0i6mo";
-WEBHOOK_URL = "https://tgbot-nordic.onrender.com";
-const token = process.env.BOT_TOKEN;
-if (!token) {
+
+const BOT_TOKEN = process.env.BOT_TOKEN || "8376231340:AAHW7p6WGbqhO-UXCf1nhPqa8RuqRA0i6mo";
+const WEBHOOK_URL = process.env.WEBHOOK_URL || "https://tgbot-nordic.onrender.com";
+
+if (!BOT_TOKEN) {
   console.error("BOT_TOKEN not set");
   process.exit(1);
 }
@@ -13,24 +13,17 @@ if (!token) {
 const app = express();
 app.use(express.json());
 
-const bot = new TelegramBot(token, { webHook: true });
+const bot = new TelegramBot(BOT_TOKEN, { webHook: true });
 
-// Use WEBHOOK_URL from env (set in Render)
-const WEBHOOK_URL = process.env.WEBHOOK_URL;
-if (!WEBHOOK_URL) {
-  console.error("WEBHOOK_URL not set");
-  process.exit(1);
-}
-
-const webhookPath = `/bot${token}`;
+const webhookPath = `/bot${BOT_TOKEN}`;
 const fullWebhookUrl = `${WEBHOOK_URL}${webhookPath}`;
 
 (async () => {
   try {
     await bot.setWebHook(fullWebhookUrl);
-    console.log("Webhook set to:", fullWebhookUrl);
+    console.log("✅ Webhook set to:", fullWebhookUrl);
   } catch (e) {
-    console.error("Failed to set webhook:", e);
+    console.error("❌ Failed to set webhook:", e);
   }
 })();
 
@@ -64,5 +57,5 @@ bot.on("callback_query", (query) => {
 // Bind to Render port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`🚀 Server listening on port ${PORT}`);
 });
